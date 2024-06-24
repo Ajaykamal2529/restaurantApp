@@ -1,83 +1,113 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import {useState} from 'react'
-import Cookies from 'js-cookie'
-import {useNavigate} from 'react-router-dom'
+import {Component} from 'react'
+import {Redirect} from 'react-router-dom'
 
+import Cookies from 'js-cookie'
 import './index.css'
 
-const Login = () => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [errorMsg, setErrorMsg] = useState('')
-  const navigate = useNavigate()
+class Login extends Component {
+  state = {usernameInput: '', passwordInput: '', ErrorMsg: ''}
 
-  const onChangeHandler = event => {
-    const {id, value} = event.target
-    if (id === 'username') {
-      setUsername(value)
-    } else {
-      setPassword(value)
-    }
+  onChangeUserInput = event => {
+    this.setState({
+      usernameInput: event.target.value,
+    })
   }
 
-  const onSuccessfulLogin = jwtToken => {
-    Cookies.set('jwt_token', jwtToken, {expires: 1})
-    navigate('/')
+  onChangePassword = event => {
+    this.setState({
+      passwordInput: event.target.value,
+    })
   }
 
-  const onFailedLogin = errorMessage => {
-    setErrorMsg(errorMessage)
+  onSubmitSuccess = jwtToken => {
+    Cookies.set('jwt_token', jwtToken, {expires: 30})
+    const {history} = this.props
+
+    history.replace('/')
+    this.setState({
+      ErrorMsg: '',
+    })
   }
 
-  const onSubmitLogin = async event => {
+  onSubmitFailure = error => {
+    this.setState({
+      ErrorMsg: `*${error}`,
+    })
+  }
+
+  onClickLogin = async event => {
     event.preventDefault()
-    const userDetails = {username, password}
-    const api = 'https://apis.ccbp.in/login'
+    const {usernameInput, passwordInput} = this.state
+    const apiUrl = 'https://apis.ccbp.in/login'
+
+    const userDetails = {
+      username: usernameInput,
+      password: passwordInput,
+    }
+    const stringifiedData = JSON.stringify(userDetails)
     const options = {
       method: 'POST',
-      body: JSON.stringify(userDetails),
+      body: stringifiedData,
     }
 
-    const response = await fetch(api, options)
+    const response = await fetch(apiUrl, options)
     const data = await response.json()
-    if (response.ok) {
-      onSuccessfulLogin(data.jwt_token)
+
+    if (response.ok === true) {
+      this.onSubmitSuccess(data.jwt_token)
     } else {
-      onFailedLogin(data.error_msg)
+      this.onSubmitFailure(data.error_msg)
     }
   }
 
-  const jwtToken = Cookies.get('jwt_token')
-
-  if (jwtToken !== undefined) {
-    return <Navigate to="/" />
+  render() {
+    const jwtToken = Cookies.get('jwt_token')
+    if (jwtToken !== undefined) {
+      return <Redirect to="/" />
+    }
+    const {ErrorMsg, usernameInput, passwordInput} = this.state
+    return (
+      <div className="bg-container">
+        <form className="form-container">
+          <h1 className="restaurant-name">UNI Resto Cafe</h1>
+          <div className="username-container">
+            <label htmlFor="username" className="username-label">
+              USERNAME
+            </label>
+            <input
+              id="username"
+              type="text"
+              placeholder="Username"
+              className="userinput"
+              value={usernameInput}
+              onChange={this.onChangeUserInput}
+            />
+          </div>
+          <div className="username-container">
+            <label htmlFor="password" className="username-label">
+              PASSWORD
+            </label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Password"
+              className="userinput"
+              value={passwordInput}
+              onChange={this.onChangePassword}
+            />
+          </div>
+          <button
+            type="submit"
+            className="login-btn"
+            onClick={this.onClickLogin}
+          >
+            Login
+          </button>
+          <p className="error-msg">{ErrorMsg}</p>
+        </form>
+      </div>
+    )
   }
-
-  return (
-    <div className="login-bg">
-      <form onSubmit={onSubmitLogin} className="login-form">
-        <h1 className="login-heading">Login</h1>
-        <label htmlFor="username">USERNAME</label>
-        <input
-          id="username"
-          type="text"
-          onChange={onChangeHandler}
-          value={username}
-        />
-        <label htmlFor="password">PASSWORD</label>
-        <input
-          id="password"
-          type="password"
-          onChange={onChangeHandler}
-          value={password}
-        />
-        <button type="submit" className="login-button">
-          Login
-        </button>
-        {errorMsg !== '' && <p className="text-danger">{errorMsg}</p>}
-      </form>
-    </div>
-  )
 }
 
 export default Login

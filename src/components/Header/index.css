@@ -1,65 +1,64 @@
-.nav-header {
-  box-shadow: 0px 10px 10px -15px #111;
+.header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  box-shadow: 0px 1px;
 }
-
-.nav-header a {
-  text-decoration: none;
-}
-
-.logo-heading {
-  font-family: 'Roboto';
-  font-weight: 600;
-  font-size: 35px;
-  color: #1f1f1f;
-}
-
-@media screen and (max-width: 576px) {
-  .logo-heading {
-    font-size: 25px;
+@media (max-width: 576px) {
+  .header-container {
+    width: 100%;
+  }
+  .my-orders {
+    display: none;
   }
 }
-
-.my-orders-text {
-  font-family: 'Roboto';
-  font-weight: 500;
-  font-size: 18px;
-  color: #585555;
-  text-decoration: none;
+@media (min-width: 577px) {
+  .header-container {
+    width: 100%;
+  }
+  .my-orders {
+    display: flex;
+    padding-right: 20px;
+    font-family: 'Roboto';
+  }
 }
-
-.cart-icon-link {
-  position: relative;
+.icons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+  margin-right: 20px;
 }
-
-.cart-icon-button {
-  border: none;
-  outline: none;
-  background-color: transparent;
-  padding: 0;
-}
-
-.cart-icon {
-  font-size: 35px;
-  color: #585555;
-}
-
-.cart-count-badge {
-  background-color: #ff6347;
-  position: absolute;
-  top: -13px;
-  right: -8px;
-  height: 25px;
-  min-width: 25px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-}
-
-.cart-count {
+.cart_count {
+  background-color: orange;
+  color: white;
+  height: 20px;
+  width: 20px;
+  border-radius: 52%;
   text-align: center;
-  color: #ffff;
+}
+
+.logout {
+  color: white;
+  background-color: blue;
+  border: none;
+  border-radius: 15px;
+  font-size: 15px;
+  padding: 10px;
+  cursor: pointer;
+  outline: none;
+}
+.heading-link {
+  text-decoration: none;
   font-family: 'Roboto';
-  font-weight: 500;
-  font-size: 12px;
-  margin: 0;
+}
+
+.cartButtonSty {
+  background-color: transparent;
+  border: none;
 }
